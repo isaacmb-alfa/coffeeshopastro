@@ -10,9 +10,9 @@ const navigation = [
 ]
 ---
 
-<nav class="hidden md:flex space-x-10">
+<nav class="flex flex-col items-center justify-end lg:flex-row space-x-5">
   {navigation.map(({name, href}) => (
-    <a href={href} class="uppercase text-lg font-bold">
+    <a href={href} class="uppercase text-lg font-bold text-white">
       {name}
     </a>
   ))}

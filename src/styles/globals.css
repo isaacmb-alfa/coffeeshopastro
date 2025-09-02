@@ -18,3 +18,13 @@
 
 
 }
+
+/* Prevent accidental horizontal scroll on small devices */
+body {
+    overflow-x: hidden;
+}
+
+img, svg {
+    max-width: 100%;
+    height: auto;
+}
