@@ -1,1 +1,25 @@
-<h2>Footer</h2>
+---
+import FooterBox from "./FooterBox.astro"
+
+---
+
+<footer class="bg-coffee-900 py-20">
+    <div class="max-w-7xl mx-auto mt-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <FooterBox heading="Ubicación" >
+          <p>Coffee Street 39</p>
+          <p>Londres, UK</p>
+        </FooterBox>
+        <FooterBox heading="Reservación" >
+          <p>Tel. +52 123 456 7890</p>
+          <a href="tel:+521234567890" class="text-coffee-100 hover:underline">Llamar</a>
+        </FooterBox>
+        <FooterBox heading="Horario de Atención" >
+          <p>Lun-Jue: 11:00 - 22:00</p>
+          <p>Vie-Sáb: 09:00 - 24:00</p>
+          <p>Domingo: Cerrado</p>
+        </FooterBox>
+    </div>
+        <p class="text-center text-white text-sm mt-10">
+            &copy; Cafetería desde 1939. Todos los derechos reservados. {new Date().getFullYear()}
+        </p>
+</footer>
