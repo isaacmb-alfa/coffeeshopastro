@@ -1,5 +1,13 @@
 ---
-import "../styles/globals.css"
----
-<h1 class="text-6xl font-bold">Inicio</h1>
 
+import Layout from "../layouts/Layout.astro";
+import bg from '../assets/bg_home.jpg';
+
+---
+
+<Layout
+ title="Inicio"
+ bgImage={bg.src}
+>
+  <h1 class="text-6xl font-bold">Inicio</h1>
+</Layout>
