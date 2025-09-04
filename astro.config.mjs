@@ -4,10 +4,13 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
- vite: {
-    plugins: [
-        tailwindcss(),
-    ]
- }
+    vite: {
+        plugins: [
+            tailwindcss(),
+        ]
+    },
+    image: {
+        domains: ['localhost:8080']
+    }
 
 });
