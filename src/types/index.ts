@@ -44,3 +44,5 @@ export const BlogSchemaPost = BaseWPSchema.omit({
 });
 
 export const BlogsSchemaPosts = z.array(BlogSchemaPost);
+
+export type Post = z.infer<typeof BlogSchemaPost>

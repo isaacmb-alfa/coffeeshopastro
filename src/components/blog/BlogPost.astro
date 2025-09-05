@@ -1,5 +1,6 @@
 ---
 import { pageAPIResponse } from "@/hooks/apiresponse";
+import PostCard from './PostCard.astro'
 
 const endpoint = "/posts";
 const data = await pageAPIResponse(endpoint,'blogs');
@@ -7,6 +8,4 @@ const data = await pageAPIResponse(endpoint,'blogs');
 // console.log(data);
 
 ---
-<div>
-    <h2>Desde blogPost</h2>
-</div>
+{data && data.map(post => <PostCard post={post}/>)}

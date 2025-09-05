@@ -1,0 +1,43 @@
+---
+import { Picture } from 'astro:assets';
+// Usar el tipo que realmente devuelve el hook para blogs
+interface BlogPost {
+  id: number;
+  title: string;
+  content: string;
+  thumbnail: { url: string; width: number; height: number };
+  large: { url: string; width: number; height: number };
+  medium_large: { url: string; width: number; height: number };
+  full: { url: string; width: number; height: number };
+}
+
+interface Props {
+    post: BlogPost,
+}
+
+const {post} = Astro.props;
+
+// Ahora sí coincide con la estructura real
+const { id, title, content, medium_large: { url, width, height } } = post;
+
+console.log(post);
+---
+
+<article class="grid grid-cols-1 lg:grid-cols-3 gap-5 py-10 border-b last-of-type:border-0  border-zinc-300">
+    <div class="lg:col-span-2 space-y-5">
+        <h3 class="text-coffee-900 font-black uppercase text-4xl">
+            <a href="">
+            {title}
+            </a>
+        </h3>
+        <div set:html={content} class="line-clamp-2"></div>
+    </div>
+    <Picture 
+    src={url}
+    alt={`Imagen de ${title}`}
+    width={width}
+    height={height}
+    formats={['avif', 'webp']}
+    class="w-full lg:w-96 h-64 object-cover rounded-2xl"
+    />
+</article>
