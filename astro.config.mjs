@@ -10,7 +10,13 @@ export default defineConfig({
         ]
     },
     image: {
-        domains: ['localhost:8080']
+        domains: ['localhost:8080'],
+        remotePatterns: [{
+            protocol: 'http',
+            hostname: 'localhost',
+            port: '8080',
+            pathname: '/wp-content/uploads/**'
+        }]
     }
 
 });

@@ -1,0 +1,62 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { pageAPIResponse } from "@/hooks/apiresponse";
+import {Picture, inferRemoteSize} from  "astro:assets";
+
+// Definir el tipo para cada proceso
+interface ProcessItem {
+  title: string;
+  description: string;
+  image: string;
+}
+
+// Definir el tipo para el ACF cuando es de tipo process
+interface ProcessACF {
+  subtitle: string;
+  process: ProcessItem[];
+}
+
+const endpoint = "/pages?slug=proceso&_embed";
+const { title, subtitle, medium_large, content, full, acf } = await pageAPIResponse(endpoint, "process");
+
+// Hacer casting seguro del acf
+const processACF = acf as ProcessACF;
+const processes = processACF.process || [];
+
+type Props = {};
+const {} = Astro.props;
+---
+
+<Layout title={title} subtitle={subtitle} bgImage={full.url}>
+  <div
+    set:html={content}
+    class="order-2
+      text-xl
+      py-3
+      mt-10
+      lg:mt-0"
+  />
+
+  <div class="mt-10 space-y-10">
+    {
+      processes &&
+        processes.map(async (step: ProcessItem, i: number) => {
+          const { title, description, image } = step;
+          const size = await inferRemoteSize(image);
+          const { width, height } = size;
+
+          return (
+            <section class="flex flex-col lg:flex-row lg:items-center gap-10">
+              <div class={`w-full lg:w-1/2 ${i % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}`}>
+                <Picture class={`shadow-lg border-10 border-white lg:transform ${i % 2 === 0 ? "lg:-rotate-6" : "lg:rotate-6"}`} src={image} alt={`Imagen de ${title}`} width={width} height={height} />
+              </div>
+              <div class={`w-full lg:w-1/2 ${i % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`}>
+                <h3 class="text-4xl text-coffee-900 uppercase pb-10 font-black">{title}</h3>
+                <p class="text-lg text-coffee-950">{description}</p>
+              </div>
+            </section>
+          );
+        })
+    }
+  </div>
+</Layout>

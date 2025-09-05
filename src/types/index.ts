@@ -1,5 +1,4 @@
 import { z } from "astro:content";
-import { object } from "astro:schema";
 
 const imageSchema = z.object({
   url: z.string(),
@@ -24,5 +23,18 @@ export const BaseWPSchema = z.object({
   feature_images: featureImagesSchema,
   acf: z.object({
     subtitle: z.string(),
+  }),
+});
+
+const processItemSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  image: z.string(),
+});
+
+export const ProcessPageSchema = BaseWPSchema.extend({
+  acf: z.object({
+    subtitle: z.string(),
+    process: z.array(processItemSchema), // Array de procesos en el campo "process"
   }),
 });
