@@ -16,7 +16,7 @@ interface ProcessACF {
   process: ProcessItem[];
 }
 
-const endpoint = "/pages?slug=proceso&_embed";
+const endpoint = "/pages?slug=proceso";
 const { title, subtitle, medium_large, content, full, acf } = await pageAPIResponse(endpoint, "process");
 
 // Hacer casting seguro del acf

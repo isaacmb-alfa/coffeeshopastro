@@ -39,10 +39,8 @@ export const ProcessPageSchema = BaseWPSchema.extend({
   }),
 });
 
-export const BlogSchemaPost = BaseWPSchema.extend({
-  acf: z.object({
-    subtitle: z.string(),
-    author: z.string(),
-    date: z.string(),
-  }),
+export const BlogSchemaPost = BaseWPSchema.omit({
+  acf: true,
 });
+
+export const BlogsSchemaPosts = z.array(BlogSchemaPost);

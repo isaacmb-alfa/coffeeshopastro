@@ -1,4 +1,10 @@
 ---
+import { pageAPIResponse } from "@/hooks/apiresponse";
+
+const endpoint = "/posts";
+const data = await pageAPIResponse(endpoint,'blogs');
+
+// console.log(data);
 
 ---
 <div>

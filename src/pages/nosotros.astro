@@ -1,10 +1,9 @@
 ---
 import { Picture } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
-import { pageAPIResponse } from "@/hooks/apiresponse";
+import { getBasePage } from "@/hooks/apiresponse";
 
-const endpoint = "/pages?slug=nosotros";
-const { title, subtitle, medium_large, content, full } = await pageAPIResponse(endpoint);
+const { title, subtitle, medium_large, content, full } = await getBasePage("nosotros");
 ---
 
 <Layout title={title} subtitle={subtitle} bgImage={full.url}>

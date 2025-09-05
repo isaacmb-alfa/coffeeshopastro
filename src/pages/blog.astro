@@ -4,7 +4,7 @@ import { pageAPIResponse } from "@/hooks/apiresponse";
 import BlogPost from '@/components/blog/BlogPost.astro';
 
 const endpoint = "/pages?slug=blog";
-const { title, subtitle, medium_large, content, full } = await pageAPIResponse(endpoint);
+const { title, subtitle, medium_large, content, full } = await pageAPIResponse(endpoint , 'base');
 ---
 <Layout title={title} subtitle={subtitle} bgImage={full.url}>
     <div
