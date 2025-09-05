@@ -38,3 +38,11 @@ export const ProcessPageSchema = BaseWPSchema.extend({
     process: z.array(processItemSchema), // Array de procesos en el campo "process"
   }),
 });
+
+export const BlogSchemaPost = BaseWPSchema.extend({
+  acf: z.object({
+    subtitle: z.string(),
+    author: z.string(),
+    date: z.string(),
+  }),
+});
