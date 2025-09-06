@@ -1,17 +1,70 @@
 ---
 export const prerender = false;
-import {getBlogPostBySlug} from '@/hooks/apiresponse';
+import PostCategories from "@/components/blog/PostCategories.astro";
+import PostMeta from "@/components/blog/PostMeta.astro";
+import { getBlogPostBySlug } from "@/hooks/apiresponse";
+import Layout from "@/layouts/Layout.astro";
+import { Picture } from "astro:assets";
 
-const {slug} = Astro.params;
+const { slug } = Astro.params;
 if (!slug) {
-  throw new Error('No slug provided');
+  throw new Error("No slug provided");
 }
 
 const data = await getBlogPostBySlug(slug);
-console.log(data);
 
+interface ImageContent {
+  url: string;
+  width: number;
+  height: number;
+}
+
+interface BlogPost {
+  id: number;
+  title: string;
+  date: string;
+  full: ImageContent;
+  content: string;
+  thumbnail: ImageContent;
+  large: ImageContent;
+  medium_large: ImageContent;
+  category_details: Array<{
+    id: number;
+    name: string;
+    slug: string;
+    link: string;
+  }>;
+}
+
+// getBlogPostBySlug devuelve un array, necesitamos el primer elemento
+const postArray = (await getBlogPostBySlug(slug)) as BlogPost[];
+const post = postArray[0];
+
+if (!post) {
+  throw new Error(`Post with slug "${slug}" not found`);
+}
+
+const { title,   full: { url, width, height }, content, date, category_details } = post;
+console.log(post);
 ---
 
-<div>
-  <h1>Blog Post: </h1>
-</div>
+<Layout title={title} subtitle={title} bgImage={url}>
+  <article class="space-y-5 max-w-4xl mx-auto">
+    <PostMeta date={date} />
+        {
+      category_details &&
+        category_details.map((category, index) => (
+          <PostCategories category={category} index={index} />
+        ))
+    }
+      <Picture
+    src={url}
+    alt={`Imagen de ${title}`}
+    width={width}
+    height={height}
+    formats={["avif", "webp"]}
+    class="w-full"
+  />
+  <div set:html={content} class="prose text-lg space-y-3 mt-5" />
+  </article>
+</Layout>

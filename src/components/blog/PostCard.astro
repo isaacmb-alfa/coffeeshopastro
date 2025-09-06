@@ -1,6 +1,7 @@
 ---
 import { Picture } from "astro:assets";
-import { formatDate } from "@/helpers";
+import PostMeta from "./PostMeta.astro";
+import PostCategories from "./PostCategories.astro";
 
 // Tipo para categorías
 interface Category {
@@ -53,19 +54,11 @@ const {
         {title}
       </a>
     </h3>
-    <p>Escrito el: <span class="text-coffee-600">{formatDate(date)}</span></p>
+   <PostMeta date={date} />
     {
       category_details &&
         category_details.map((category, index) => (
-          <a
-            href={`/blog/categoria/${category.slug}`}
-            class="text-coffee-600 hover:text-coffee-900"
-            data-id={index}
-          >
-            <span class="inline-block bg-coffee-100 text-coffee-800 px-3 py-1 rounded-full text-sm font-semibold mr-2 mb-2">
-              {category.name}
-            </span>
-          </a>
+          <PostCategories category={category} index={index} />
         ))
     }
     <div set:html={content} class="line-clamp-2" />
