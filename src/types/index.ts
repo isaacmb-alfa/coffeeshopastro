@@ -40,20 +40,24 @@ export const ProcessPageSchema = BaseWPSchema.extend({
   }),
 });
 
-const CategorySchema = z.object({
+export const CategorySchema = z.object({
   id: z.number(),
   name: z.string(),
   slug: z.string(),
   link: z.string(),
 });
 
-const CategorysSchema = z.array(CategorySchema);
+export const CategoriesSlugSchema = z.array(CategorySchema.pick({
+  slug: true,
+}));
+
+const CategoriesSchema = z.array(CategorySchema);
 
 export const BlogSchemaPost = BaseWPSchema.omit({
   acf: true,
 }).extend({
   date: z.string(),
-  category_details: CategorysSchema
+  category_details: CategoriesSchema
 });
 
 

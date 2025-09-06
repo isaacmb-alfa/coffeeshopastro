@@ -1,0 +1,54 @@
+---
+import PostCard from "@/components/blog/PostCard.astro";
+import Layout from "@/layouts/Layout.astro";
+import { pageAPIResponse } from "@/hooks/apiresponse";
+import {
+  CategoriesSlugSchema,
+  CategorySchema,
+} from "@/types";
+export async function getStaticPaths() {
+  const endpoint = "/categories?_fields=slug";
+  const baseUrl = import.meta.env.WORDPRESS_API_URL;
+  if (!baseUrl) {
+    throw new Error("WORDPRESS_API_URL not defined");
+  }
+  const response = await fetch(`${baseUrl}${endpoint}`);
+  const json = await response.json();
+  const categories = CategoriesSlugSchema.parse(json);
+
+  return categories.map((category) => ({
+    params: { slug: category.slug },
+    props: { category },
+  }));
+}
+// extraemos las categorías del path
+const { slug } = Astro.params;
+if (!slug) {
+  throw new Error("No slug provided");
+}
+
+const catUrl = `${import.meta.env.WORDPRESS_API_URL}/categories?slug=${slug}`;
+if (!catUrl) {
+  throw new Error("No WORDPRESS_API_URL provided");
+}
+
+const catRes = await fetch(catUrl);
+const catJson = await catRes.json();
+
+const category = CategorySchema.parse(catJson[0]);
+
+// Usar el hook en lugar de fetch directo
+const endpointPosts = `/posts?categories=${category.id}&_embed`;
+const posts = await pageAPIResponse(endpointPosts, 'blogs');
+
+console.log(posts);
+
+---
+<Layout
+  title={`Post en la Categoría: ${category.name}`}
+  subtitle={`Post en la Categoría: ${category.name}`}
+  bgImage={posts[0]?.full.url || '/default-bg.jpg'}
+>   
+{posts && posts.map((post) => <PostCard post={post}/>)
+}
+</Layout>
