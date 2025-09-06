@@ -11,8 +11,6 @@ if (!slug) {
   throw new Error("No slug provided");
 }
 
-const data = await getBlogPostBySlug(slug);
-
 interface ImageContent {
   url: string;
   width: number;
@@ -37,18 +35,39 @@ interface BlogPost {
 }
 
 // getBlogPostBySlug devuelve un array, necesitamos el primer elemento
-const postArray = (await getBlogPostBySlug(slug)) as BlogPost[];
-const post = postArray[0];
+let postArray: BlogPost[];
+let post: BlogPost;
+let title: string;
+let url: string;
+let width: number;
+let height: number;
+let content: string;
+let date: string;
+let category_details: Array<{
+  id: number;
+  name: string;
+  slug: string;
+  link: string;
+}>;
 
-if (!post) {
-  throw new Error(`Post with slug "${slug}" not found`);
+try {
+  postArray = (await getBlogPostBySlug(slug)) as BlogPost[];
+  post = postArray[0];
+
+  if (!post || postArray.length === 0) {
+    return Astro.redirect('/404');
+  }
+
+  ({ title, full: { url, width, height }, content, date, category_details } = post);
+  console.log(post);
+} catch (error) {
+  // Captura errores del hook como "No data found for endpoint" o "Invalid blog data format"
+  console.error(`Error loading blog post "${slug}":`, error);
+  return Astro.redirect('/404');
 }
-
-const { title,   full: { url, width, height }, content, date, category_details } = post;
-console.log(post);
 ---
 
-<Layout title={title} subtitle={title} bgImage={url}>
+<Layout title={title} subtitle={title} bgImage={url} opcionalClass={'max-w-4xl mx-auto lg:pb-5'} >
   <article class="space-y-5 max-w-4xl mx-auto">
     <PostMeta date={date} />
         {

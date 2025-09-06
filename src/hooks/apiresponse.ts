@@ -74,7 +74,8 @@ export async function pageAPIResponse(
     const resJSON = await res.json();
     
     if (!resJSON || resJSON.length === 0) {
-      throw new Error(`No data found for endpoint: ${endpoint}`);
+      // Error más específico para el usuario final
+      throw new Error(`POST_NOT_FOUND: No data found for endpoint: ${endpoint}`);
     }
 
     // Validación adicional del schemaType
@@ -114,8 +115,12 @@ export async function pageAPIResponse(
         } as BasePageResponse;
         
       case 'blogs':
-        const blogData = BlogsSchemaPosts.parse(resJSON);
-        return blogData.map(post => ({
+        const blogData = BlogsSchemaPosts.safeParse(resJSON);
+        if(!blogData.success) {
+          // Aquí puedes manejar el error de validación
+            throw new Error('Invalid blog data format');
+        }
+        return blogData.data.map(post => ({
           id: post.id,
           slug: post.slug,
           title: post.title.rendered,

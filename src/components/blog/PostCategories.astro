@@ -14,11 +14,11 @@ const { category, index } = Astro.props;
 
 <a
   href={`/blog/categoria/${category.slug}`}
-  class="text-coffee-600 hover:text-coffee-900"
+  class="text-coffee-600 hover:text-coffee-900 "
   data-id={index}
 >
   <span
-    class="inline-block bg-coffee-100 text-coffee-800 px-3 py-1 rounded-full text-sm font-semibold mr-2 mb-2"
+    class="inline-block bg-coffee-100 text-coffee-800 px-3 py-1 rounded-full text-sm font-semibold mr-2 mb-5"
   >
     {category.name}
   </span>
