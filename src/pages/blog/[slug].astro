@@ -1,0 +1,17 @@
+---
+export const prerender = false;
+import {getBlogPostBySlug} from '@/hooks/apiresponse';
+
+const {slug} = Astro.params;
+if (!slug) {
+  throw new Error('No slug provided');
+}
+
+const data = await getBlogPostBySlug(slug);
+console.log(data);
+
+---
+
+<div>
+  <h1>Blog Post: </h1>
+</div>

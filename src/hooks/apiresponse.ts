@@ -8,6 +8,7 @@ interface ImageData {
 
 interface BasePageResponse {
   title: string;
+  slug: string;
   subtitle: string;
   thumbnail: ImageData;
   large: ImageData;
@@ -30,14 +31,24 @@ interface ProcessPageResponse extends BasePageResponse {
   };
 }
 
+interface Categorys {
+  id: number,
+  name: string,
+  slug: string,
+  link: string,
+}
+
 interface BlogPostResponse {
   id: number;
+  slug: string;
   title: string;
   content: string;
   thumbnail: ImageData;
   large: ImageData;
   medium_large: ImageData;
   full: ImageData;
+  date: string;
+  category_details: Categorys[]; // Array de categorías, no un objeto único
 }
 
 type BlogResponse = BlogPostResponse[];
@@ -78,37 +89,43 @@ export async function pageAPIResponse(
         
         const {
           acf,
+          slug,
           title: { rendered: title },
           content: { rendered },
+    
           feature_images: {
             thumbnail,
             large,
             medium_large,
             full,
-          },
+          }
         } = data;
 
         return {
           title,
+          slug,
           subtitle: acf.subtitle,
           thumbnail,
           large,
           medium_large,
           full,
           content: rendered,
-          acf,
+          acf
         } as BasePageResponse;
         
       case 'blogs':
         const blogData = BlogsSchemaPosts.parse(resJSON);
         return blogData.map(post => ({
           id: post.id,
+          slug: post.slug,
           title: post.title.rendered,
           content: post.content.rendered,
           thumbnail: post.feature_images.thumbnail,
           large: post.feature_images.large,
           medium_large: post.feature_images.medium_large,
           full: post.feature_images.full,
+          date: post.date,
+          category_details: post.category_details,
         })) as BlogResponse;
         
       default:
@@ -131,4 +148,7 @@ export const getProcessPage = (slug: string) =>
 export const getBlogPosts = (limit?: number) => {
   const limitParam = limit ? `&per_page=${limit}` : '';
   return pageAPIResponse(`/posts?_embed${limitParam}`, 'blogs');
+};
+export const getBlogPostBySlug = (slug: string) => {
+  return pageAPIResponse(`/posts?slug=${slug}&_embed`, 'blogs');
 };

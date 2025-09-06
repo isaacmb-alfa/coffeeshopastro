@@ -14,6 +14,7 @@ const featureImagesSchema = z.object({
 });
 export const BaseWPSchema = z.object({
   id: z.number(),
+  slug: z.string(),
   title: z.object({
     rendered: z.string(),
   }),
@@ -39,10 +40,24 @@ export const ProcessPageSchema = BaseWPSchema.extend({
   }),
 });
 
+const CategorySchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  slug: z.string(),
+  link: z.string(),
+});
+
+const CategorysSchema = z.array(CategorySchema);
+
 export const BlogSchemaPost = BaseWPSchema.omit({
   acf: true,
+}).extend({
+  date: z.string(),
+  category_details: CategorysSchema
 });
+
+
 
 export const BlogsSchemaPosts = z.array(BlogSchemaPost);
 
-export type Post = z.infer<typeof BlogSchemaPost>
+export type Post = z.infer<typeof BlogSchemaPost>;

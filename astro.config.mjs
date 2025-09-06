@@ -17,6 +17,5 @@ export default defineConfig({
             port: '8080',
             pathname: '/wp-content/uploads/**'
         }]
-    }
-
+    },
 });

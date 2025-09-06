@@ -1,43 +1,81 @@
 ---
-import { Picture } from 'astro:assets';
+import { Picture } from "astro:assets";
+import { formatDate } from "@/helpers";
+
+// Tipo para categorías
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  link: string;
+}
+
 // Usar el tipo que realmente devuelve el hook para blogs
 interface BlogPost {
   id: number;
+  slug: string
   title: string;
   content: string;
   thumbnail: { url: string; width: number; height: number };
   large: { url: string; width: number; height: number };
   medium_large: { url: string; width: number; height: number };
   full: { url: string; width: number; height: number };
+  date: string;
+  category_details: Category[]; // Array de categorías
 }
 
 interface Props {
-    post: BlogPost,
+  post: BlogPost;
 }
 
-const {post} = Astro.props;
+const { post } = Astro.props;
 
-// Ahora sí coincide con la estructura real
-const { id, title, content, medium_large: { url, width, height } } = post;
+// Ahora incluye las categorías
+const {
+  id,
+  slug,
+  title,
+  content,
+  medium_large: { url, width, height },
+  date,
+  category_details,
+} = post;
 
-console.log(post);
+// console.log(post);
 ---
 
-<article class="grid grid-cols-1 lg:grid-cols-3 gap-5 py-10 border-b last-of-type:border-0  border-zinc-300">
-    <div class="lg:col-span-2 space-y-5">
-        <h3 class="text-coffee-900 font-black uppercase text-4xl">
-            <a href="">
-            {title}
-            </a>
-        </h3>
-        <div set:html={content} class="line-clamp-2"></div>
-    </div>
-    <Picture 
+<article
+  class="grid grid-cols-1 lg:grid-cols-3 gap-5 py-10 border-b last-of-type:border-0 border-zinc-300"
+>
+  <div class="lg:col-span-2 space-y-5">
+    <h3 class="text-coffee-900 font-black uppercase text-4xl">
+      <a href={`/blog/${slug}`}>
+        {title}
+      </a>
+    </h3>
+    <p>Escrito el: <span class="text-coffee-600">{formatDate(date)}</span></p>
+    {
+      category_details &&
+        category_details.map((category, index) => (
+          <a
+            href={`/blog/categoria/${category.slug}`}
+            class="text-coffee-600 hover:text-coffee-900"
+            data-id={index}
+          >
+            <span class="inline-block bg-coffee-100 text-coffee-800 px-3 py-1 rounded-full text-sm font-semibold mr-2 mb-2">
+              {category.name}
+            </span>
+          </a>
+        ))
+    }
+    <div set:html={content} class="line-clamp-2" />
+  </div>
+  <Picture
     src={url}
     alt={`Imagen de ${title}`}
     width={width}
     height={height}
-    formats={['avif', 'webp']}
+    formats={["avif", "webp"]}
     class="w-full lg:w-96 h-64 object-cover rounded-2xl"
-    />
+  />
 </article>
