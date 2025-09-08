@@ -176,6 +176,15 @@ export async function pageAPIResponse(
           category_details: post.category_details,
         })) as BlogResponse;
 
+      case "categories":
+        const categoryData = CategorySchema.parse(resJSON[0]);
+        return {
+          id: categoryData.id,
+          name: categoryData.name,
+          slug: categoryData.slug,
+          link: categoryData.link,
+        } as Categorys;
+
       case "galeria":
         const galleryData = GalleryPageSchema.parse(resJSON[0]);
 
