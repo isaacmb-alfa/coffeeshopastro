@@ -27,6 +27,16 @@ export const BaseWPSchema = z.object({
   }),
 });
 
+const gallerySchema = z.object({
+    id: z.number(),
+    large: imageSchema,
+    full: imageSchema,
+});
+
+export const GalleryPageSchema = BaseWPSchema.extend({
+  gallery: z.array(gallerySchema), // Array de galería en el campo "gallery"
+});
+
 const processItemSchema = z.object({
   title: z.string(),
   description: z.string(),
@@ -65,3 +75,18 @@ export const BlogSchemaPost = BaseWPSchema.omit({
 export const BlogsSchemaPosts = z.array(BlogSchemaPost);
 
 export type Post = z.infer<typeof BlogSchemaPost>;
+
+// En types/index.ts, cambiar Gallery a:
+export type Gallery = Array<{
+  id: number;
+  large: {
+    url: string;
+    width: number;
+    height: number;
+  };
+  full: {
+    url: string;
+    width: number;
+    height: number;
+  };
+}>;

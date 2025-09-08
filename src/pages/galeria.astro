@@ -1,0 +1,13 @@
+---
+import Layout from "../layouts/Layout.astro";
+import GalleryGrid from "@/components/gallery/GalleryGrid.astro";
+import { getGalleryPage } from "@/hooks/apiresponse";
+
+const { title, subtitle, content, full, gallery } =
+  await getGalleryPage("galeria");
+
+---
+
+<Layout title={title} subtitle={subtitle} bgImage={full.url}>
+  <GalleryGrid gallery={gallery} />
+</Layout>

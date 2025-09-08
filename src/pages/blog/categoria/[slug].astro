@@ -1,11 +1,12 @@
 ---
 import PostCard from "@/components/blog/PostCard.astro";
 import Layout from "@/layouts/Layout.astro";
-import { pageAPIResponse } from "@/hooks/apiresponse";
+import { pageAPIResponse, getCategoryBySlug } from "@/hooks/apiresponse";
 import {
   CategoriesSlugSchema,
   CategorySchema,
 } from "@/types";
+// función para eztraer los params
 export async function getStaticPaths() {
   const endpoint = "/categories?_fields=slug";
   const baseUrl = import.meta.env.WORDPRESS_API_URL;
@@ -26,22 +27,14 @@ const { slug } = Astro.params;
 if (!slug) {
   throw new Error("No slug provided");
 }
-
-const catUrl = `${import.meta.env.WORDPRESS_API_URL}/categories?slug=${slug}`;
-if (!catUrl) {
-  throw new Error("No WORDPRESS_API_URL provided");
-}
-
-const catRes = await fetch(catUrl);
-const catJson = await catRes.json();
-
-const category = CategorySchema.parse(catJson[0]);
+// Usar el hook en lugar de fetch directo
+const category = await getCategoryBySlug(slug);
+// console.log(category);
 
 // Usar el hook en lugar de fetch directo
 const endpointPosts = `/posts?categories=${category.id}&_embed`;
 const posts = await pageAPIResponse(endpointPosts, 'blogs');
 
-console.log(posts);
 
 ---
 <Layout
