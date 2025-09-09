@@ -117,6 +117,11 @@ export const MenuItemTransformed = z.object({
     width: z.number(),
     height: z.number(),
   }),
+  full: z.object({
+    url: z.string(),
+    width: z.number(),
+    height: z.number(),
+  }),
   acf: z.object({
     description: z.string(),
     price: z.coerce.number(),

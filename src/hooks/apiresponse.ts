@@ -19,6 +19,11 @@ interface MenuItemResponse {
     width: number;
     height: number;
   };
+  full: {
+    url: string;
+    width: number;
+    height: number;
+  };
   acf: {
     description: string;
     price: number;
@@ -258,6 +263,12 @@ export async function pageAPIResponse(
             width: product.feature_images.medium.width,
             height: product.feature_images.medium.height,
           },
+          full: {
+            url: product.feature_images.full.url,
+            width: product.feature_images.full.width,
+            height: product.feature_images.full.height,
+          },
+          
           acf: {
             description: product.acf.description,
             price: typeof product.acf.price === 'string' ? parseFloat(product.acf.price) : product.acf.price,

@@ -1,0 +1,48 @@
+---
+import { pageAPIResponse } from "@/hooks/apiresponse";
+import MenuItem from "./MenuItem.astro";
+
+// Props que recibirá este componente
+const { title, dataID, endpoint } = Astro.props;
+
+// Consumimos la API usando el endpoint que viene de props
+const menuItems = await pageAPIResponse(endpoint, "menu");
+
+// console.log(menuItems);
+
+---
+
+<div>
+  <h4 class="text-white font-black text-4xl uppercase text-center my-10">
+    {title}
+  </h4>
+  <ul id='menu' class="space-y-3">
+    {
+      menuItems && menuItems.items && menuItems.items.length > 0 ? (
+        menuItems.items.map((item) => (
+          <MenuItem
+            title={item.title}
+            description={item.acf.description}
+            price={item.acf.price}
+            imagen={item.medium}
+            imageFull={item.full}
+          />
+        ))
+      ) : (
+        <li class="text-white text-2xl">No hay productos disponibles</li>
+      )
+    }
+  </ul>
+</div>
+
+<script>
+  import PhotoSwipeLightbox from "photoswipe/lightbox";
+  import "photoswipe/style.css";
+
+  const lightbox = new PhotoSwipeLightbox({
+    gallery: "#menu",
+    children: "a",
+    pswpModule: () => import("photoswipe"),
+  });
+  lightbox.init();
+</script>
