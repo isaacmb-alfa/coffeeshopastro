@@ -1,16 +1,36 @@
+
 import {
   BaseWPSchema,
   ProcessPageSchema,
   BlogsSchemaPosts,
   CategorySchema,
   GalleryPageSchema,
+  MenuItemSchema,
 } from "@/types";
+import type { MenuResponse, MenuItemType } from "@/types";
+import { z } from "zod";
+
+// Tipo simplificado para el item de menú transformado
+interface MenuItemResponse {
+  id: number;
+  title: string;
+  medium: {
+    url: string;
+    width: number;
+    height: number;
+  };
+  acf: {
+    description: string;
+    price: number;
+  };
+}
 
 interface ImageData {
   url: string;
   width: number;
   height: number;
 }
+
 
 interface BasePageResponse {
   title: string;
@@ -90,13 +110,18 @@ export async function pageAPIResponse(
 ): Promise<GalleryPageResponse>;
 export async function pageAPIResponse(
   endpoint: string,
-  schemaType: "base" | "process" | "categories" | "galeria" | "blogs" = "base"
+  schemaType: "menu"
+): Promise<MenuResponse>;
+export async function pageAPIResponse(
+  endpoint: string,
+  schemaType: "base" | "process" | "categories" | "galeria" | "menu" | "blogs" = "base"
 ): Promise<
   | BasePageResponse
   | ProcessPageResponse
   | BlogResponse
   | Categorys
   | GalleryPageResponse
+  | MenuResponse
 > {
   try {
     const urlAPI =
@@ -119,12 +144,12 @@ export async function pageAPIResponse(
 
     // Validación adicional del schemaType
     if (
-      !["base", "process", "blogs", "categories", "galeria"].includes(
+      !["base", "process", "blogs", "categories", "galeria", "menu"].includes(
         schemaType
       )
     ) {
       throw new Error(
-        `Invalid schema type: ${schemaType}. Must be 'base', 'process', 'blogs', or 'categories' or 'galeria'`
+        `Invalid schema type: ${schemaType}. Must be 'base', 'process', 'blogs', 'categories', 'galeria', or 'menu'`
       );
     }
 
@@ -215,6 +240,34 @@ export async function pageAPIResponse(
           gallery,
         } as GalleryPageResponse;
 
+      case "menu":
+        // Primero validar que tenemos productos válidos usando Zod
+        const menuValidation = z.array(MenuItemSchema).safeParse(resJSON);
+        
+        if (!menuValidation.success) {
+          console.error("Menu validation errors:", menuValidation.error.issues);
+          throw new Error("Invalid menu data format");
+        }
+        
+        // Transformar los productos validados al formato final con tipos explícitos
+        const transformedItems: MenuItemType[] = menuValidation.data.map((product): MenuItemType => ({
+          id: product.id,
+          title: product.title.rendered,
+          medium: {
+            url: product.feature_images.medium.url,
+            width: product.feature_images.medium.width,
+            height: product.feature_images.medium.height,
+          },
+          acf: {
+            description: product.acf.description,
+            price: typeof product.acf.price === 'string' ? parseFloat(product.acf.price) : product.acf.price,
+          },
+        }));
+        
+        return {
+          items: transformedItems
+        } satisfies MenuResponse;
+
       default:
         // Este caso no debería ocurrir ahora con la validación
         throw new Error(`Unknown schema type: ${schemaType}`);
@@ -246,4 +299,9 @@ export const getCategoryBySlug = (slug: string) => {
 
 export const getGalleryPage = (slug: string) => {
   return pageAPIResponse(`/pages?slug=${slug}&_embed`, "galeria");
+};
+
+export const getMenuItems = (categoryId?: number): Promise<MenuResponse> => {
+  const categoryParam = categoryId ? `?product_category=${categoryId}` : "";
+  return pageAPIResponse(`/products${categoryParam}`, "menu");
 };

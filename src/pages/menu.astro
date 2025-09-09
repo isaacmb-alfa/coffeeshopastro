@@ -1,0 +1,31 @@
+---
+import { Picture } from "astro:assets";
+import Layout from "../layouts/Layout.astro";
+import { getBasePage } from "@/hooks/apiresponse";
+import ProductsMenu from "@/components/menu/ProductsMenu.astro";
+const { title, subtitle, medium_large, content, full } = await getBasePage("menu");
+---
+<Layout title={title} subtitle={subtitle} bgImage={full.url}>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 pb-10">
+    <Picture
+      src={medium_large.url}
+      alt={`Imagen de ${title}`}
+      class="order-1 shadow-lg transform -rotate-6 border-10 border-white"
+      width={medium_large.width}
+      height={medium_large.height}
+      formats={["avif", "webp"]}
+    />
+    <div
+      set:html={content}
+      class="order-2
+      text-xl
+      py-3
+      mt-10
+      lg:mt-0"
+    />
+  </div>
+
+  <ProductsMenu
+  slot={"after-main-content"}
+   />
+</Layout>
